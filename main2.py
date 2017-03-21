@@ -3,6 +3,6 @@
 # @Time    : 3/20/17 6:46 PM
 # @Author  : Tony Cao
 # @File    : main2.py
-import random
+import random, math
 
-print(random.random())
+print(pow(2, 2, 1))
