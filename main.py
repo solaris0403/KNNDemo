@@ -10,7 +10,7 @@ import math
 import operator
 
 
-# 67/33
+# 处理数据 训练数据集数据量/测试数据集数据量的比值取67/33是一个常用的惯例
 def loadDataset(filename, split, trainingSet=[], testSet=[]):
     with open(filename, 'rb') as csvfile:
         lines = csv.reader(csvfile)
@@ -24,11 +24,11 @@ def loadDataset(filename, split, trainingSet=[], testSet=[]):
                 testSet.append(dataset[x])
 
 
-trainingSet = []
-testSet = []
-loadDataset('iris.data', 0.66, trainingSet, testSet)
-print('Train: ' + repr(len(trainingSet)))
-print('Test: ' + repr(len(testSet)))
+# trainingSet = []
+# testSet = []
+# loadDataset('iris.data', 0.66, trainingSet, testSet)
+# print('Train: ' + repr(len(trainingSet)))
+# print('Test: ' + repr(len(testSet)))
 
 
 # 相似度
@@ -40,10 +40,10 @@ def euclideanDistance(instance1, instance2, length):
     return math.sqrt(distance)
 
 
-data1 = [2, 2, 2, 'a']
-data2 = [4, 4, 4, 'b']
-distance = euclideanDistance(data1, data2, 3)
-print(repr(distance))
+# data1 = [2, 2, 2, 'a']
+# data2 = [4, 4, 4, 'b']
+# distance = euclideanDistance(data1, data2, 3)
+# print(repr(distance))
 
 
 # 临近元素
@@ -64,14 +64,14 @@ def getNeighbors(trainingSet, testInstance, k):
     return neighbors
 
 
-trainingSet = [[2, 2, 2, 'a'], [4, 4, 4, 'b']]
-testInstance = [5, 5, 5]
-k = 1
-neighbors = getNeighbors(trainingSet, testInstance, k)
-print(neighbors)
+# trainingSet = [[2, 2, 2, 'a'], [4, 4, 4, 'b']]
+# testInstance = [5, 5, 5]
+# k = 1
+# neighbors = getNeighbors(trainingSet, testInstance, k)
+# print(neighbors)
 
 
-# 预测结果
+# 预测结果  投票
 def getResponse(neighbors):
     classVotes = {}
     for x in range(len(neighbors)):
@@ -84,21 +84,49 @@ def getResponse(neighbors):
     return sortedVotes[0][0]
 
 
-neighbors = [[1, 1, 1, 'a'], [2, 2, 2, 'a'], [3, 3, 3, 'c']]
-response = getResponse(neighbors)
-print(response)
+# neighbors = [[1, 1, 1, 'a'], [2, 2, 2, 'a'], [3, 3, 3, 'c']]
+# response = getResponse(neighbors)
+# print(response)
 
 
 # 准确度
+# 计算在测试数据集中算法正确预测的比例，这个比例叫分类准确度。
 def getAccuracy(testSet, predictions):
     correct = 0
     for x in range(len(testSet)):
-        if testSet[x][-1] is predictions[x]:
+        test = testSet[x][-1]
+        pred = predictions[x]
+        print('test:'+test+', pred:'+pred)
+        if test == pred:
             correct += 1
     return (correct / float(len(testSet))) * 100.0
 
 
-testSet = [[1, 1, 1, 'a'], [2, 2, 2, 'a'], [3, 3, 3, 'c']]
-predictions = ['a', 'a', 'a']
-accuracy = getAccuracy(testSet, predictions)
-print(accuracy)
+# testSet = [[1, 1, 1, 'a'], [2, 2, 2, 'a'], [3, 3, 3, 'c']]
+# predictions = ['a', 'a', 'a']
+# accuracy = getAccuracy(testSet, predictions)
+# print(accuracy)
+
+def main():
+    # prepare data
+    trainingSet = []
+    testSet = []
+    split = 0.66
+    loadDataset('iris.data', split, trainingSet, testSet)
+    print('Train: ' + repr(len(trainingSet)))
+    print('Test: ' + repr(len(testSet)))
+
+    # generate predictions
+    predictions = []
+    k = 3
+    for x in range(len(testSet)):
+        neighbors = getNeighbors(trainingSet, testSet[x], k)
+        result = getResponse(neighbors)
+        predictions.append(result)
+        print('> predicted=' + repr(result) + ', actual=' + repr(testSet[x][-1]))
+    accuracy = getAccuracy(testSet, predictions)
+    print('Accuracy: ' + repr(accuracy) + '%')
+
+main()
+
+
